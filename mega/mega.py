@@ -506,7 +506,7 @@ class Mega(object):
 
     ##########################################################################
     # UPLOAD
-    def upload(self, filename, dest=None, dest_filename=None):
+    def upload(self, filename, dest=None, dest_filename=None, attrs=None):
         #determine storage node
         if dest is None:
             #if none set, upload to cloud drive node
@@ -572,6 +572,11 @@ class Mega(object):
         else:
             attribs = {'n': os.path.basename(filename)}
 
+        #: Added support for custom attributes saved on file attributes
+        if attrs is not None:
+            for k, v in attrs.items():
+                attribs[k] = v
+
         encrypt_attribs = base64_url_encode(encrypt_attr(attribs, ul_key[:4]))
         key = [ul_key[0] ^ ul_key[4], ul_key[1] ^ ul_key[5],
                ul_key[2] ^ meta_mac[0], ul_key[3] ^ meta_mac[1],
@@ -589,7 +594,7 @@ class Mega(object):
 
     ##########################################################################
     # OTHER OPERATIONS
-    def create_folder(self, name, dest=None):
+    def create_folder(self, name, dest=None, attrs=None):
         #determine storage node
         if dest is None:
             #if none set, upload to cloud drive node
@@ -600,8 +605,13 @@ class Mega(object):
         #generate random aes key (128) for folder
         ul_key = [random.randint(0, 0xFFFFFFFF) for _ in range(6)]
 
-        #encrypt attribs
         attribs = {'n': name}
+        #: Added support for custom attributes saved on file attributes
+        if attrs is not None:
+            for k, v in attrs.items():
+                attribs[k] = v
+
+        #encrypt attribs
         encrypt_attribs = base64_url_encode(encrypt_attr(attribs, ul_key[:4]))
         encrypted_key = a32_to_base64(encrypt_key(ul_key[:4], self.master_key))
 
