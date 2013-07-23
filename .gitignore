@@ -4,6 +4,7 @@
 
 # Hidden files #
 ###################
+.idea
 # Build files #
 ###################
 build/
