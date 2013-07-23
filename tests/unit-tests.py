@@ -101,6 +101,20 @@ class TestMega(unittest.TestCase):
         resp = m.remove_contact(TEST_CONTACT)
         self.assertIsInstance(resp, int)
 
+    def test_upload_with_attrs(self):
+        m.upload(TEST_FILE, attrs={'key': 'value'})
+        file = m.find(TEST_FILE)
+        if file:
+            attrs = file[1]['a']
+            self.assertIn('key', attrs)
+
+    def test_create_folder_with_attrs(self):
+        resp = m.create_folder(TEST_FOLDER, attrs={'key': 'value'})
+        folder = m.find(TEST_FOLDER)
+        if folder:
+            attrs = folder[1]['a']
+            self.assertIn('key', attrs)
+
 
 if __name__ == '__main__':
     unittest.main()
